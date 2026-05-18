@@ -139,6 +139,52 @@ that own the whole workflow.
 - A replacement for thinking. The grilling phase is where the actual
   design work happens. The structure just makes sure it happens.
 
+## When code ships without a spec
+
+The spec flow above is the right path for most feature work, but it's
+not the *only* path. Hotfixes, small bugfixes, refactors, and changes
+a senior dev knows are right — these can land without a spec. The cost
+of admission for skipping the flow is one line in
+`.agent/drift/REGISTER.md`:
+
+```yaml
+- date: 2026-05-18
+  ref: abc1234
+  kind: hotfix
+  area: payment-service
+  one_line: "Fixed race condition in payment retry"
+  spec_status: needed   # or not-applicable, or deferred
+```
+
+**Code review is where drift gets caught.** The `review-change` skill
+walks a reviewer through a PR end-to-end: intent vs. effect, spec
+alignment, drift surfacing, cross-cutting concerns. Drift findings get
+turned into register entries or spec updates that land *with* the PR,
+before merge. Catching drift before merge beats catching it after by
+a wide margin — the author still has context, the reviewer is right
+there, and nothing has been built on top of the divergence yet.
+
+`.agent-tools/check-drift.mjs` is the underlying detection tool. It
+produces a three-tier report:
+- 🔴 **Red:** explicit inconsistency (spec says X, code says not-X)
+- 🟡 **Yellow:** code area changed without spec update or register entry
+- 🟢 **Green:** drift accounted for
+
+The `review-change` skill calls it for per-PR drift surfacing. You can
+also run it directly for periodic audits, or wire it into CI as a
+safety net with `--strict` (which exits 1 on red). CI is the *last*
+line of defense, not the first.
+
+For accumulated drift (a backlog of yellow items, or work that
+slipped past review), the `reconcile-drift` skill handles triage:
+most items are 10-second `not-applicable` register entries; some are
+small spec updates; a few escalate to real new specs via `grill-spec`.
+
+The point is that drift is *information*, not a defect. A growing
+yellow count means the team has been shipping without specs; an
+accumulating red count means the specs are folklore. Both are
+addressable — but only if you can see them.
+
 ## Files at a glance
 
 ```
@@ -158,14 +204,21 @@ AGENTS.md                          canonical entrypoint (all agents)
     harness.md                     per-spec checks
     impact.md                      frontmatter → history view
   adr/                             architectural decisions
-  discovery/                       transcripts (ideate) + surveys (reverse-engineer)
-  skills/                          ideate, grill-spec, implement-spec, verify-harness, update-history, reverse-engineer
+  discovery/                       reverse-engineering artifacts
+  drift/
+    README.md                      drift philosophy
+    REGISTER.md                    one-liner log of un-spec'd changes
+  skills/                          ideate, grill-spec, implement-spec,
+                                   verify-harness, update-history,
+                                   reverse-engineer, reconcile-drift,
+                                   review-change
   starter-packs/                   optional paste-in content for common stacks
     python-fastapi-frontend/         Python + FastAPI + LangGraph/Pydantic-AI + Angular/React
 .agent-tools/
   check-harness.mjs                executable check runner
   validate-specs.mjs               frontmatter validator (CI)
   build-history.mjs                generates docs/history/index.html
+  check-drift.mjs                  reports drift between specs and code
 docs/history/                      GENERATED — do not edit
 src/                               your code (or backend/ + web/ for full-stack)
 ```
