@@ -1,0 +1,35 @@
+# Example Devin environment blueprint.
+# Copy to .devin/blueprint.yaml and adapt to your stack.
+# See: https://docs.devin.ai/onboard-devin/new-repo-setup
+
+# What you want available before every session.
+install:
+  # Python backend
+  - command: python --version
+  - command: pip install -U pip
+  - command: pip install -e ".[dev]"
+    # or: poetry install --with dev
+    # or: uv sync
+
+  # Frontend (uncomment the one you use)
+  # - command: corepack enable && pnpm install --frozen-lockfile
+  # - command: npm ci
+
+  # Tooling Devin itself will need
+  - command: node --version  # required for .agent-tools/*.mjs
+
+# Commands Devin will run to verify a change before opening a PR.
+# These should mirror the harness in .agent/HARNESS.md.
+lint:
+  - command: ruff check .
+  - command: ruff format --check .
+  # - command: pnpm --filter web lint
+
+test:
+  - command: pytest -x
+  # - command: pnpm --filter web test --run
+
+# Things Devin should "just know" about the repo.
+notes: |
+  Read AGENTS.md before doing anything. Use the skills in .agent/skills/.
+  Run node .agent-tools/check-harness.mjs before declaring done.

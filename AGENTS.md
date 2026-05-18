@@ -35,12 +35,34 @@ Before doing anything, read these in order:
 
 Skills live in `.agent/skills/`. Read the relevant `SKILL.md` before invoking.
 
-- `grill-spec` — turn an idea into a new SDD (creates SPEC + impact + harness)
+- `ideate` — *runs in a standalone chat, outside the project repo*.
+  An open-ended product discussion: benchmarks, ambitious framings,
+  horizon, risks. Produces a **product brief** (not a spec) that the
+  user hands to a coding agent for grounding.
+- `grill-spec` — Path A: rough idea → draft spec, inside the project.
+  Path B (the **grounding phase**): product brief → draft spec,
+  reconciling intent with project reality.
 - `implement-spec` — execute an accepted SDD
 - `verify-harness` — run the harness, report structured failures
 - `update-history` — regenerate `docs/history/` after a spec changes state
 - `reverse-engineer` — bring an existing codebase into this structure by
   reading the code and producing draft `discovered` specs
+
+## Choosing the right starting skill
+
+- **"I want to think through whether this is even the right idea"** →
+  `ideate` in a separate chat. Open-ended product discussion. Produces
+  a product brief.
+- **"I have a product brief from ideate, ground it in this project"** →
+  `grill-spec` Path B, in the project repo
+- **"I have a clear feature in mind, no need to explore"** → `grill-spec`
+  Path A directly in the project
+- **"The spec is ready, build it"** → `implement-spec`
+- **"This existing codebase has no docs"** → `reverse-engineer`
+
+The two-stage flow (ideate → grill-spec Path B) separates *product
+thinking* from *project grounding*. Skip ideate when the idea doesn't
+need that exploration; skip grill-spec Path A when the idea does.
 
 ## State transitions for a spec
 
