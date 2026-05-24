@@ -62,12 +62,19 @@ Append below this comment. Keep entries in reverse chronological order
 -->
 
 ```yaml
-# Example entry — delete this once you have real entries
-- date: 2026-05-18
-  ref: example-not-real
-  kind: chore
-  area: tooling
-  one_line: "Set up the drift register file in a new project"
+- date: 2026-05-23
+  ref: spec-0001-amendment
+  kind: feature
+  area: backend/middleware
+  one_line: "Added baseline security middleware (headers, body-size cap, per-IP rate limit) to spec 0001"
   spec_status: not-applicable
-  notes: "Replace this with a real entry; this is just a format demo."
+  superseded_specs: []
+  follow_up_spec: 0001
+  notes: |
+    Added same-day as the security-baseline pass (ADR-0002).
+    Amended spec 0001 in place with new BR-27..29 + a Security
+    section, rather than writing 0001.5 — the work is foundational
+    to 0001's "project bootstrap" outcome and was simply missing
+    from the original requirements. Tests + harness updated;
+    `updated:` bumped in impact.md.
 ```

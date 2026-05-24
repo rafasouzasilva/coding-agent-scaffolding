@@ -8,6 +8,12 @@
 <!--
 Map each Behavioral Requirement from SPEC.md to a verifiable check.
 Format: `[ ] BR-N: <what is true when this passes>`
+
+Include negative tests for every authn/authz/validation requirement
+from the Security section — "denies when X", "rejects malformed Y",
+"returns same response for missing-user vs. wrong-password".
+Tests covering only the happy path miss the failure modes the
+Security section was added to catch.
 -->
 
 - [ ] BR-1:
