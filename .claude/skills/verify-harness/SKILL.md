@@ -58,6 +58,17 @@ differently.
    the user wants you to fix, they'll say so — and that's a fresh
    `implement-spec` cycle, not a silent patch.
 
+## When called from another skill
+
+If `implement-spec` (or another long-running flow) is invoking you,
+the caller should consider running this verification in a subagent
+rather than inline. Pytest output on a large suite (hundreds of
+tests, especially on failure) can balloon the calling conversation's
+cached-input footprint for the rest of the session. The structured
+report in step 4 is exactly what a subagent returns — no information
+is lost vs. running inline, but the verbose tool output stays in the
+subagent's context, not the main thread's.
+
 ## Failure modes to avoid
 
 - Marking an audit `PASS` without citing evidence

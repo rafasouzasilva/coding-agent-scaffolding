@@ -13,9 +13,15 @@ Before doing anything, read these in order:
    Read this every session. If you don't know a term used here, stop and ask.
 2. **`.agent/ARCHITECTURE.md`** — the technical *how*. Patterns, module
    boundaries, conventions you must follow.
-3. **`.agent/HARNESS.md`** — the global boundaries you must satisfy before
+3. **`.agent/ROADMAP.md`** — the project's *current state*: what's
+   implemented, what's accepted, what's proposed, what's planned, and
+   what the immediate next spec is. This is the file a fresh session
+   (e.g. after a `/clear` or equivalent reset) reads to know where to
+   pick up. Hand-maintained by `grill-spec`, `implement-spec` step 8,
+   and verified by `update-history`.
+4. **`.agent/HARNESS.md`** — the global boundaries you must satisfy before
    declaring any task complete. These are non-negotiable.
-4. **`.agent/specs/`** — feature specifications. Each folder is one SDD.
+5. **`.agent/specs/`** — feature specifications. Each folder is one SDD.
    Read the SPEC.md for whatever you're working on, plus its `impact.md`
    and `harness.md`.
 

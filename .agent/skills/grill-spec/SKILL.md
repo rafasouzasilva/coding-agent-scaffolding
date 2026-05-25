@@ -28,9 +28,11 @@ into a structured spec that fits this specific project. Specifically:
    what this spec is *for* in the longer arc — that matters when
    implementation choices arise.
 
-2. **Reconcile against the project.** Read `.agent/CONTEXT.md`,
-   `.agent/ARCHITECTURE.md`, and every existing `impact.md` under
-   `.agent/specs/`. Look for:
+2. **Reconcile against the project.** Read `.agent/ROADMAP.md` first
+   (it tells you what's already implemented, accepted, proposed, and
+   planned — including whether the brief's idea is already on the
+   Horizon list), then `.agent/CONTEXT.md`, `.agent/ARCHITECTURE.md`,
+   and every existing `impact.md` under `.agent/specs/`. Look for:
    - Terminology in the brief that conflicts with `CONTEXT.md`
    - "Touches" or shape elements that don't fit `ARCHITECTURE.md`'s
      module boundaries
@@ -84,6 +86,12 @@ into a structured spec that fits this specific project. Specifically:
    > `<filename>`. Strategic context lives in that file; this spec
    > is the grounded form.
 
+8. **Update `.agent/ROADMAP.md`** in the same change: add a one-line
+   entry under "Proposed (drafted, not yet accepted)" referencing the
+   new spec. If the brief's Horizon implied follow-on themes that
+   aren't already on the planned/horizon list, append them there too
+   — that's how the strategic context survives across `/clear`.
+
 If the user just says "I have a feature idea" without pointing you at
 a brief, you're on Path A.
 
@@ -95,10 +103,14 @@ asking questions.
 
 ## Steps (Path A)
 
-1. **Read** `.agent/CONTEXT.md` and `.agent/ARCHITECTURE.md` so your questions
-   use the project's existing language. Note any inline mermaid
-   diagrams — they summarize relationships the spec may need to extend
-   or invalidate, and the implementing change is responsible for
+1. **Read** `.agent/ROADMAP.md` first — it tells you the current focus,
+   what's already implemented, what's accepted, what's proposed, and
+   what's on the planned/horizon list (this idea may already be there,
+   in which case you're drafting the spec the roadmap was pointing at).
+   Then read `.agent/CONTEXT.md` and `.agent/ARCHITECTURE.md` so your
+   questions use the project's existing language. Note any inline
+   mermaid diagrams — they summarize relationships the spec may need to
+   extend or invalidate, and the implementing change is responsible for
    updating any diagram its scope touches.
 
 2. **Read** every `impact.md` under `.agent/specs/` so you understand what
@@ -120,10 +132,15 @@ asking questions.
 6. **Create the spec folder** by copying `_template/` and filling all three
    files. Set `status: proposed` in `impact.md`.
 
-7. **Surface conflicts.** If any existing spec's `impact.md` lists modules
+7. **Update `.agent/ROADMAP.md`** in the same change: add a one-line
+   entry under "Proposed (drafted, not yet accepted)" referencing the
+   new spec. If the idea came from the planned/horizon list, remove or
+   mark the corresponding entry there (e.g. `→ drafted as 00NN`).
+
+8. **Surface conflicts.** If any existing spec's `impact.md` lists modules
    you'll change, name them explicitly to the user. Do not bury this.
 
-8. **Stop.** Do not implement. The user reviews, edits, and changes status
+9. **Stop.** Do not implement. The user reviews, edits, and changes status
    to `accepted` themselves (or asks you to, with confirmation).
 
 ## Failure modes to avoid

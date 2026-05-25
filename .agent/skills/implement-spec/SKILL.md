@@ -11,7 +11,13 @@ Execute an accepted SDD with the harness in mind from the first line.
 
 - The spec exists under `.agent/specs/NNNN-x/`
 - Its `impact.md` has `status: accepted`
-- You have read `CONTEXT.md`, `ARCHITECTURE.md`, `HARNESS.md`
+- You have read `.agent/ROADMAP.md` (where the project is, what's next),
+  `.agent/CONTEXT.md`, `.agent/ARCHITECTURE.md`, and `.agent/HARNESS.md`
+
+`ROADMAP.md` is especially load-bearing when this session started cold
+after a `/clear` — it's the single doc that tells you what's already
+implemented, what's accepted, and what the immediate next spec is. Read
+it *first*, before scanning spec folders.
 
 If any precondition fails, stop and report. Do not "implement" a `proposed`
 spec — that bypasses the review the proposal exists to enable.
@@ -73,9 +79,54 @@ spec — that bypasses the review the proposal exists to enable.
    includes security gates (`bandit`, `pip-audit`, `gitleaks`) — these
    must exit 0 too, not just the test suite.
 
-8. **Update status.** When harness passes, edit `impact.md` to
-   `status: implemented` and update the `updated:` date. Then invoke
-   `update-history`.
+   For specs whose test surface is in the hundreds of tests (or any
+   time pytest output is likely to be verbose), run `verify-harness`
+   via a subagent (`general-purpose`, foreground) and have it return
+   only the structured Gates/Audits/Acceptance report. The verbose
+   pytest output otherwise lands in the main conversation and you
+   pay cached input on it for every subsequent turn.
+
+8. **Update status.** When harness passes:
+   1. Edit `impact.md` to `status: implemented` and update the
+      `updated:` date.
+   2. Edit `.agent/ROADMAP.md`: move this spec's line from "Accepted"
+      (or "Proposed", if it skipped directly) to "Implemented" with a
+      one-line summary in the same shape as the existing entries, and
+      refresh "Current focus" to point at what's next. This is what
+      lets the next session (after `/clear`) pick up cleanly.
+   3. Invoke `update-history`.
+
+## Context discipline
+
+A full implement-spec cycle re-reads SPEC files, source files, test
+output, and harness reports across many turns. By the time you reach
+`update-history`, the session can carry 200k+ tokens that every
+subsequent turn pays cached input on. The rules below keep cost under
+control without sacrificing quality. Apply them by default; they are
+not optional.
+
+- **Edit, not Write, for modifications.** `Edit` sends only the diff;
+  `Write` re-sends the whole file. Reserve `Write` for genuinely new
+  files or full rewrites.
+- **Do not re-read a file you just edited.** `Edit` would have errored
+  if the change didn't apply, and the harness will catch a logic
+  error. Re-reading to "verify visually" doubles the cost of every
+  edit you make.
+- **Delegate broad surveys to a subagent.** When the next slice needs
+  a "where is X used / where is pattern Y defined" sweep across more
+  than ~3 files, use the `Explore` subagent (read-only) or
+  `general-purpose` (multi-step). The agent reads in its own context
+  and returns a summary; the main thread only pays for the summary.
+- **Suggest `/clear` after `update-history`.** A spec is
+  self-contained — the next session reads `.agent/ROADMAP.md` (which
+  step 8 just updated), `.agent/CONTEXT.md`, `.agent/ARCHITECTURE.md`,
+  and its own spec folder. That's cheap. Chaining specs in one
+  continuous session is the single largest source of avoidable
+  cached-input cost. When you complete step 8, tell the user
+  verbatim: "Spec NNNN is implemented, ROADMAP.md is current, and
+  history is rebuilt. Recommend `/clear` before starting the next
+  spec — the fresh session will read `.agent/ROADMAP.md` to know
+  what's next."
 
 ## Failure modes to avoid
 
